@@ -1,0 +1,23 @@
+name	cost	rent	rent1	rent2	rent3	rent4	rentHotel	color	Mortgage	isMortgaged	upgradeLevel	upgradeCost	owner				
+Mediterranean Avenue	60	2	10	30	90	160	250	5C4033	30	FALSE	0	50	null				
+Baltic Avenue	60	4	20	60	180	320	450	5C4033	30	FALSE	0	50	null				
+Oriental Avenue	100	6	30	90	270	400	550	97ccf1	50	FALSE	0	50	null				
+Vermont Avenue	100	6	30	90	270	400	550	97ccf1	50	FALSE	0	50	null				
+Connecticut Avenue	120	8	40	100	300	450	600	97ccf1	60	FALSE	0	50	null				
+St. Charles Place	140	10	50	150	450	625	750	ef63a4	70	FALSE	0	100	null				
+States Avenue	140	10	50	150	450	625	750	ef63a4	70	FALSE	0	100	null				
+Virginia Avenue	160	12	60	180	500	700	900	ef63a4	80	FALSE	0	100	null				
+St. James Place	180	14	70	200	550	750	950	ec9b0e	90	FALSE	0	100	null				
+Tennessee Avenue	180	14	70	200	550	750	950	ec9b0e	90	FALSE	0	100	null				
+New York Avenue	200	16	80	220	600	800	1000	ec9b0e	100	FALSE	0	100	null				
+Kentucky Avenue	220	18	90	250	700	875	1050	dd0927	110	FALSE	0	150	null				
+Indiana Avenue	220	18	90	250	700	875	1050	dd0927	110	FALSE	0	150	null				
+Illinois Avenue	240	20	100	300	750	925	1100	dd0927	120	FALSE	0	150	null				
+Atlantic Avenue	260	22	110	330	800	975	1150	FFEB00	130	FALSE	0	150	null				
+Ventnor Avenue	260	22	110	330	800	975	1150	FFEB00	130	FALSE	0	150	null				
+Marvin Gardens	280	24	120	360	850	1025	1200	FFEB00	140	FALSE	0	150	null				
+Pacific Avenue	300	26	130	390	900	1100	1275	02ac5a	150	FALSE	0	200	null				
+North Carolina Avenue	300	26	130	390	900	1100	1275	02ac5a	150	FALSE	0	200	null				
+Pennsylvania Avenue	320	28	150	450	1000	1200	1400	02ac5a	160	FALSE	0	200	null				
+Park Place	350	35	175	500	1100	1300	1500	00008b	175	FALSE	0	200	null				
+Boardwalk	400	50	200	600	1400	1700	2000	00008b	200	FALSE	0	200	null				
