@@ -19,9 +19,18 @@ import java.util.Scanner;
 public class Datafactory {
     private HashMap<Integer, Tile> tiles;
     private HashMap<Integer, Property> Properties;
+    private HashMap<Integer, Tax> Taxes;
+    private HashMap<Integer, Railroad> Railroads;
+        private HashMap<Integer, Utility> Utilities;
+
+    
 
     public Datafactory() {
         BuildProperties();
+        BuildTaxes();
+        BuildRailroads();
+        BuildUtility();
+        
     }
     
     
@@ -90,21 +99,171 @@ public class Datafactory {
             
         }
     }
+
+    public void BuildTaxes(){
+        try{
+                        Taxes = new  HashMap<Integer,Tax>() ;
+
+                        Scanner file = new Scanner(new File("data" + File.separator + "taxes.txt"));
+                        file.nextLine();
+                        while (file.hasNextLine()) {
+                
+                        String lineData = file.nextLine();
+               
+                        Scanner line = new Scanner(lineData);
+                        line.useDelimiter("\t");
+                
+                      
+                        int location = Integer.parseInt(line.next()); 
+                        String name = line.next(); 
+                        int taxValue = Integer.parseInt(line.next());
+                        
+                        
+                
+                
+                 
+
+               //int location, String name, int cost, int[] rent, Color color, int Mortgage, boolean isMortgaged, int upgradeLevel, int upgradeCost, Player owner
+               Tax tax  = new Tax(location, name, taxValue);
+                     
+                Taxes.put(location, tax);
     
-  
+                
+            }
+                        
+            for(Entry<Integer, Tax> entry: Taxes.entrySet()) {
+                      System.out.println(entry);
+
+            }
+                        
+                        
+        } catch (FileNotFoundException ex) {
+            System.out.println("ERROR: tiles dat file not found");
+            
+        }
+    }
+    
+        public void BuildRailroads(){
+        try{
+                        Railroads = new HashMap<Integer, Railroad>();
+                        Scanner file = new Scanner(new File("data" + File.separator + "Railroad.txt"));
+                        file.nextLine();
+                        while (file.hasNextLine()) {
+                
+                            String lineData = file.nextLine();
+               
+                            Scanner line = new Scanner(lineData);
+                            line.useDelimiter("\t");
+                
+                      
+                            int location = Integer.parseInt(line.next()); 
+                            String name = line.next(); 
+                            int cost = Integer.parseInt(line.next());
+                        
+                        int[] rent = new int[4];
+                        
+                        rent[0] = Integer.parseInt(line.next()); 
+                        rent[1] = Integer.parseInt(line.next());
+                        rent[2] = Integer.parseInt(line.next()); 
+                        rent[3] = Integer.parseInt(line.next()); 
+                       
+
+                int Mortgage = Integer.parseInt(line.next()); 
+                String isMortgagedString =  line.next();  
+                boolean isMortgaged;
+                if (isMortgagedString.toUpperCase().equals("FALSE")){
+                          isMortgaged = false;
+
+                }
+                else{
+                      isMortgaged = true;
+
+                }
+                    System.out.println(isMortgaged);
+                     String ownerString = line.next();
+                     
+                     
+                    Player owner =null;
+
+               //int location, String name, int cost, int[] rent, Color color, int Mortgage, boolean isMortgaged, int upgradeLevel, int upgradeCost, Player owner
+               Railroad railroad  = new Railroad(location, name,  cost, rent,  Mortgage,  isMortgaged,  owner);
+                     
+                Railroads.put(location, railroad);
+    
+                
+            }
+                        
+            for(Entry<Integer, Railroad> entry: Railroads.entrySet()) {
+                      System.out.println(entry);
+
+            }
+                        
+                        
+        } catch (FileNotFoundException ex) {
+            System.out.println("ERROR: tiles dat file not found");
+            
+        }
+    }
 
     
+        public void BuildUtility(){
+        try{
+                        Utilities = new HashMap<Integer, Utility>();
+                        Scanner file = new Scanner(new File("data" + File.separator + "Utility.txt"));
+                        file.nextLine();
+                        while (file.hasNextLine()) {
+                
+                        String lineData = file.nextLine();
+               
+                        Scanner line = new Scanner(lineData);
+                        line.useDelimiter("\t");
+                
+                      
+                        int location = Integer.parseInt(line.next()); 
+                        String name = line.next(); 
+                        int cost = Integer.parseInt(line.next());
+                        int Mortgage = Integer.parseInt(line.next()); 
 
-    
-    
-    
+                        int[] rentRate = new int[2];
+                        
+                        rentRate[0] = Integer.parseInt(line.next()); 
+                        rentRate[1] = Integer.parseInt(line.next());
+                                        String isMortgagedString =  line.next();  
+                boolean isMortgaged;
+                if (isMortgagedString.toUpperCase().equals("FALSE")){
+                          isMortgaged = false;
 
+                }
+                else{
+                      isMortgaged = true;
+
+                }
+                    System.out.println(isMortgaged);
+                     
+                     String ownerString = line.next();
+                     
+                     
+                    Player owner =null;
+
+               Utility utility  = new Utility( location,  name,  cost,  Mortgage, rentRate,  isMortgaged,  owner);
+                     
+                Utilities.put(location, utility);
     
-    
-    
-    
-    
-    
+                
+            }
+                        
+            for(Entry<Integer, Utility> entry: Utilities.entrySet()) {
+                      System.out.println(entry);
+
+            }
+                        
+                        
+        } catch (FileNotFoundException ex) {
+            System.out.println("ERROR: tiles dat file not found");
+            
+        }
+    }
+
     
     }
 

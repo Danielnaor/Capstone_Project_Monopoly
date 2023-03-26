@@ -9,15 +9,38 @@ package com.mycompany.capstone_project_monopoly;
  * @author manske_905351
  */
 public class Railroad extends Type{
-    private int cost = 150;
-    private int[] rent = {25, 50, 100, 200};
-    private int mortgage = 100;
+    private int location;
+    private String name;
+    private int cost;
+    private int[] rent;
+    private int mortgage;
     private boolean isMortgaged;
     private Player owner;
 
-    public Railroad(boolean isMortgaged, Player owner) {
+    public Railroad(int location, String name, int cost, int[] rent, int mortgage, boolean isMortgaged, Player owner) {
+        this.location = location;
+        this.name = name;
+        this.cost = cost;
+        this.rent = rent;
+        this.mortgage = mortgage;
         this.isMortgaged = isMortgaged;
         this.owner = owner;
+    }
+
+    public int getLocation() {
+        return location;
+    }
+
+    public void setLocation(int location) {
+        this.location = location;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getCost() {
@@ -28,8 +51,12 @@ public class Railroad extends Type{
         this.cost = cost;
     }
 
-    public int getRent(int num) {
-        return rent[num];
+    public int[] getRent() {
+        return rent;
+    }
+
+    public void setRent(int[] rent) {
+        this.rent = rent;
     }
 
     public int getMortgage() {
@@ -55,6 +82,12 @@ public class Railroad extends Type{
     public void setOwner(Player owner) {
         this.owner = owner;
     }
+
+    @Override
+    public String toString() {
+        return "Railroad{" + "location=" + location + ", name=" + name + ", cost=" + cost + ", rent=" + rent + ", mortgage=" + mortgage + ", isMortgaged=" + isMortgaged + ", owner=" + owner + '}';
+    }
+
 
     
             
