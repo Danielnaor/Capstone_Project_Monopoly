@@ -8,7 +8,6 @@ import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
@@ -21,15 +20,17 @@ public class Datafactory {
     private HashMap<Integer, Property> Properties;
     private HashMap<Integer, Tax> Taxes;
     private HashMap<Integer, Railroad> Railroads;
-        private HashMap<Integer, Utility> Utilities;
+    private HashMap<Integer, Utility> Utilities;
+    private HashMap<Integer, Other> OtherTempo;
 
     
-
     public Datafactory() {
         BuildProperties();
         BuildTaxes();
         BuildRailroads();
         BuildUtility();
+        BuildOther();
+        BuildTiles();
         
     }
     
@@ -72,7 +73,7 @@ public class Datafactory {
                       isMortgaged = true;
 
                 }
-                    System.out.println(isMortgaged);
+        //            System.out.println(isMortgaged);
                      int upgradeLevel = Integer.parseInt(line.next()); 
                      int upgradeCost = Integer.parseInt(line.next());
                      String ownerString = line.next();
@@ -143,7 +144,7 @@ public class Datafactory {
         }
     }
     
-        public void BuildRailroads(){
+    public void BuildRailroads(){
         try{
                         Railroads = new HashMap<Integer, Railroad>();
                         Scanner file = new Scanner(new File("data" + File.separator + "Railroad.txt"));
@@ -179,7 +180,7 @@ public class Datafactory {
                       isMortgaged = true;
 
                 }
-                    System.out.println(isMortgaged);
+        //            System.out.println(isMortgaged);
                      String ownerString = line.next();
                      
                      
@@ -206,7 +207,7 @@ public class Datafactory {
     }
 
     
-        public void BuildUtility(){
+    public void BuildUtility(){
         try{
                         Utilities = new HashMap<Integer, Utility>();
                         Scanner file = new Scanner(new File("data" + File.separator + "Utility.txt"));
@@ -238,7 +239,7 @@ public class Datafactory {
                       isMortgaged = true;
 
                 }
-                    System.out.println(isMortgaged);
+            //        System.out.println(isMortgaged);
                      
                      String ownerString = line.next();
                      
@@ -252,7 +253,60 @@ public class Datafactory {
                 
             }
                         
-            for(Entry<Integer, Utility> entry: Utilities.entrySet()) {
+ //           for(Entry<Integer, Utility> entry: Utilities.entrySet()) {
+   //                   System.out.println(entry);
+
+     //       }
+                        
+                        
+        } catch (FileNotFoundException ex) {
+            System.out.println("ERROR: tiles dat file not found");
+            
+        }
+    }
+        
+    public void BuildOther(){
+         try{
+             //        private HashMap<Integer, Other> OtherTempo;
+
+                        OtherTempo = new  HashMap<Integer, Other>();
+
+                        Scanner file = new Scanner(new File("data" + File.separator + "otherTEMPO.txt"));
+                        file.nextLine();
+                        while (file.hasNextLine()) {
+                
+                        String lineData = file.nextLine();
+               
+                        Scanner line = new Scanner(lineData);
+                        line.useDelimiter("\t");
+                
+                      
+                        int location = Integer.parseInt(line.next()); 
+                        String name = line.next(); 
+                        String isInJailString =  line.next();  
+                boolean isInJail;
+                if (isInJailString.toUpperCase().equals("FALSE")){
+                          isInJail = false;
+
+                }
+                else{
+                      isInJail = true;
+
+                }
+                //    System.out.println(isInJail);
+                     String playerString = line.next();                          
+                     Player player =null;
+                
+                Other othertempoitem  = new Other(location, name,isInJail,player);
+                OtherTempo.put(location, othertempoitem);
+                 
+
+                     
+    
+                
+            }
+                        
+           for(Entry<Integer, Other> entry: OtherTempo.entrySet()) {
                       System.out.println(entry);
 
             }
@@ -264,6 +318,93 @@ public class Datafactory {
         }
     }
 
+    
+    public void BuildTiles(){
+           tiles = new HashMap<Integer, Tile>();
+  
+        
+        for(int searchKey = 1; searchKey < 41; searchKey++){
+            System.out.println(searchKey);
+            Type type = null;
+            String Name ="";
+     
+
+        // check if any of the HashMaps contains the key
+        boolean keyFound = false;
+                   
+
+        if (Properties.containsKey(searchKey) || Taxes.containsKey(searchKey) || Railroads.containsKey(searchKey) || Utilities.containsKey(searchKey) || OtherTempo.containsKey(searchKey) ) {
+            keyFound = true;
+        }
+
+// print the result
+if (keyFound) {
+    System.out.println("At least one HashMap contains the key " + searchKey);
+    
+            if (Properties.containsKey(searchKey)) {
+                type = Properties.get(searchKey);
+                Name = Properties.get(searchKey).getName();
+                System.out.println(Name);
+                System.out.println(type);
+            } else if (Taxes.containsKey(searchKey)) {
+                type = Taxes.get(searchKey);
+                Name = Taxes.get(searchKey).getName();
+                System.out.println(Name);
+                                System.out.println(type);
+
+            } else if (Railroads.containsKey(searchKey)) {
+                type = Railroads.get(searchKey);
+                Name = Railroads.get(searchKey).getName();
+                System.out.println(Name);
+                                System.out.println(type);
+
+            } else if (Utilities.containsKey(searchKey)) {
+                type = Utilities.get(searchKey);
+                Name = Utilities.get(searchKey).getName();
+                System.out.println(Name);
+                                System.out.println(type);
+
+            } else if (OtherTempo.containsKey(searchKey)) {
+                type = OtherTempo.get(searchKey);
+                Name = OtherTempo.get(searchKey).getName();
+                System.out.println(Name);
+                                System.out.println(type);
+
+            }
+} else {
+    System.out.println("None of the HashMaps contains the key " + searchKey);
+}
+
+     
+         
+     
+        
+    /* 
+     if(type == null){
+            
+    }
+
+     else{
+         Tile tile = new Tile(i, type, Name );
+         
+         tiles.put(i, tile);
+     }
+
+      */
+     
+     
+     
+            
+            
+            
+        }
+        
+        for(Entry<Integer, Tile> entry: tiles.entrySet()) {
+                      System.out.println(entry);
+
+            }
+    }
+           
     
     }
 

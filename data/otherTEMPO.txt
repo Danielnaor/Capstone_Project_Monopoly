@@ -1,0 +1,5 @@
+location	name	isInJail	player
+1	GO	FALSE	null
+11	In Jail/Just Visiting	FALSE	null
+21	Free Parking	FALSE	null
+31	Go To Jail	FALSE	null

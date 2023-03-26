@@ -10,4 +10,63 @@ package com.mycompany.capstone_project_monopoly;
  */
 public class Other extends Type{
     
+    int location;
+    String name;
+    boolean isInJail;
+    Player playerPassingorJail;
+
+        public Other(int location, String name, boolean isInJail, Player playerPassingorJail) {
+        this.location = location;
+        this.name = name;
+        this.isInJail = isInJail;
+        this.playerPassingorJail = playerPassingorJail;
+    }
+    public int getLocation() {
+        return location;
+    }
+
+    public void setLocation(int location) {
+        this.location = location;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isIsInJail() {
+        return isInJail;
+    }
+
+    public void setIsInJail(boolean isInJail) {
+        this.isInJail = isInJail;
+    }
+
+    public Player getPlayerPassingorJail() {
+        return playerPassingorJail;
+    }
+
+    public void setPlayerPassingorJail(Player playerPassingorJail) {
+        this.playerPassingorJail = playerPassingorJail;
+    }
+
+    @Override
+    public String toString() {
+        return "Other{" + "location=" + location + ", name=" + name + ", isInJail=" + isInJail + ", playerPassingorJail=" + playerPassingorJail + '}';
+    }
+
+    
+
+    
+    
+    
+    
+            
+         
+           
+    
+   
 }
