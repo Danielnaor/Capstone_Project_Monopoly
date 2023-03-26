@@ -16,9 +16,9 @@ public class MainWindow extends javax.swing.JFrame {
     private Card[] cChestCards;
     private Card[] chanceCards;
     private int currentPlayer;
-    private int lastRoll;
+    public static int lastRoll;
     private int numPlayers;
-    
+    private   Cube roll = new Cube();
 
     /**
      * Creates new form MainWindow
@@ -26,7 +26,9 @@ public class MainWindow extends javax.swing.JFrame {
     public MainWindow() {
         initComponents();
         Datafactory df = new Datafactory();
-        
+              roll = roll();
+          lastRoll =    roll.getRoll1()+roll.getRoll2();
+          
         
        
     }
@@ -156,6 +158,22 @@ public class MainWindow extends javax.swing.JFrame {
         
         Card chance12 = new Card("You Have Been Elected Chairman of the Board Pay Each Player $50", false, 0, (50 * numPlayers));
     }
+    
+    
+    
+    public Cube roll(){
+        Cube ref = new Cube();
+        int roll1 = ref.getRoll1();
+        int roll2 = ref.getRoll2();
+        boolean isDouble = ref.IsDouble();
+        Cube fullroll = new Cube(roll1,roll2,isDouble);
+        
+        return fullroll;
+        
+    }
+    
+    
+    
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;

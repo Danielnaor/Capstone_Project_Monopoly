@@ -2,10 +2,8 @@ com/mycompany/capstone_project_monopoly/Type.class
 com/mycompany/capstone_project_monopoly/Tile.class
 com/mycompany/capstone_project_monopoly/Card.class
 com/mycompany/capstone_project_monopoly/Utility.class
+com/mycompany/capstone_project_monopoly/Cube.class
 com/mycompany/capstone_project_monopoly/MainWindow.class
-com/mycompany/capstone_project_monopoly/Chance.class
-com/mycompany/menopoly/Cube.class
-com/mycompany/capstone_project_monopoly/Datafactory.class
 com/mycompany/capstone_project_monopoly/Tax.class
 com/mycompany/capstone_project_monopoly/Property.class
 com/mycompany/capstone_project_monopoly/MainWindow$1.class

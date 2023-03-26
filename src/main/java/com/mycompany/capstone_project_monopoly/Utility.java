@@ -24,7 +24,8 @@ public class Utility extends Type{
     }
 
     public int getRentRate(int num) {
-        return rentRate[num];
+        int rent_Rate = MainWindow.lastRoll * rentRate[num];
+        return rent_Rate;
     }
 
     public boolean isIsMortgaged() {

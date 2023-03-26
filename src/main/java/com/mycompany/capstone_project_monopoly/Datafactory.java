@@ -8,6 +8,8 @@ import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Scanner;
 
 /**
@@ -16,7 +18,7 @@ import java.util.Scanner;
  */
 public class Datafactory {
     private HashMap<Integer, Tile> tiles;
-    private HashMap<String, Property> Properties;
+    private HashMap<Integer, Property> Properties;
 
     public Datafactory() {
         BuildProperties();
@@ -25,7 +27,7 @@ public class Datafactory {
     
     public void BuildProperties(){
         try{
-                        Properties = new HashMap<String, Property>();
+                        Properties = new HashMap<Integer, Property>();
                         Scanner file = new Scanner(new File("data" + File.separator + "properties.txt"));
                         file.nextLine();
                         while (file.hasNextLine()) {
@@ -36,9 +38,9 @@ public class Datafactory {
                         line.useDelimiter("\t");
                 
                       
-                        
+                        int location = Integer.parseInt(line.next()); 
                         String name = line.next(); 
-                        String cost = line.next(); 
+                        int cost = Integer.parseInt(line.next());
                         
                         int[] rent = new int[6];
                         
@@ -69,17 +71,23 @@ public class Datafactory {
                      
                     Player owner =null;
 
-                
-            //    Property property  = new Property( name,  cost, rent,  color,  Mortgage,  isMortgaged,  upgradeLevel,  upgradeCost,  owner);
+               //int location, String name, int cost, int[] rent, Color color, int Mortgage, boolean isMortgaged, int upgradeLevel, int upgradeCost, Player owner
+               Property property  = new Property(location, name,  cost, rent,  color,  Mortgage,  isMortgaged,  upgradeLevel,  upgradeCost,  owner);
                      
-          //      Properties.put(name, property);
+                Properties.put(location, property);
     
                 
+            }
+                        
+            for(Entry<Integer, Property> entry: Properties.entrySet()) {
+                      System.out.println(entry);
+
             }
                         
                         
         } catch (FileNotFoundException ex) {
             System.out.println("ERROR: tiles dat file not found");
+            
         }
     }
     

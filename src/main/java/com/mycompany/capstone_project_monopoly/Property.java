@@ -11,6 +11,7 @@ import java.awt.Color;
  * @author manske_905351
  */
 public class Property extends Type{
+        private int location;
     private String name;
     private int cost;
     private int[] rent;
@@ -21,7 +22,8 @@ public class Property extends Type{
     private int upgradeCost;
     private Player owner;
 
-    public Property(String name, int cost, int[] rent, Color color, int Mortgage, boolean isMortgaged, int upgradeLevel, int upgradeCost, Player owner) {
+    public Property(int location, String name, int cost, int[] rent, Color color, int Mortgage, boolean isMortgaged, int upgradeLevel, int upgradeCost, Player owner) {
+        this.location = location;
         this.name = name;
         this.cost = cost;
         this.rent = rent;
@@ -31,6 +33,14 @@ public class Property extends Type{
         this.upgradeLevel = upgradeLevel;
         this.upgradeCost = upgradeCost;
         this.owner = owner;
+    }
+
+    public int getLocation() {
+        return location;
+    }
+
+    public void setLocation(int location) {
+        this.location = location;
     }
 
     public String getName() {
@@ -105,5 +115,11 @@ public class Property extends Type{
         this.owner = owner;
     }
 
+    @Override
+    public String toString() {
+        return "Property{" + "location=" + location + ", name=" + name + ", cost=" + cost + ", rent=" + rent + ", color=" + color + ", Mortgage=" + Mortgage + ", isMortgaged=" + isMortgaged + ", upgradeLevel=" + upgradeLevel + ", upgradeCost=" + upgradeCost + ", owner=" + owner + '}';
+    }
+
+    
   
 }
