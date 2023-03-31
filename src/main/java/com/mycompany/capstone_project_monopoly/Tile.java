@@ -26,7 +26,17 @@ class Tile {
     }
     public String getTypeName(){
         
-        return "" + type;
+        String typenameFull = "" + type;
+        
+        
+        try{
+            int index = typenameFull.indexOf("{");
+            return typenameFull.substring(0,index);
+        }catch (Exception e){
+            return  "" + type;
+
+        }
+        
         
     }
 

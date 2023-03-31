@@ -17,4 +17,9 @@ public class Chance extends Type{
      public Card getCard(int num) {
         return cards[num];
     }
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

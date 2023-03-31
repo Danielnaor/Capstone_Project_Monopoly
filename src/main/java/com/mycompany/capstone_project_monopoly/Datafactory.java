@@ -7,6 +7,7 @@ package com.mycompany.capstone_project_monopoly;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Scanner;
@@ -17,20 +18,35 @@ import java.util.Scanner;
  */
 public class Datafactory {
     private HashMap<Integer, Tile> tiles;
+
+    
     private HashMap<Integer, Property> Properties;
     private HashMap<Integer, Tax> Taxes;
     private HashMap<Integer, Railroad> Railroads;
     private HashMap<Integer, Utility> Utilities;
     private HashMap<Integer, Other> OtherTempo;
+    private HashMap<Integer, Chance> Chance; //AndCommunityChest
+     private HashMap<Integer, CommunityChest> CommunityChest;
+        private Card[] chancecards;
+    private Card[] cChestCards;
+
+  
+
 
     
-    public Datafactory() {
+    public Datafactory(Card[] chancecards, Card[] cChestCards) {
+        this.chancecards = chancecards;
+        this.cChestCards = cChestCards;
         BuildProperties();
         BuildTaxes();
         BuildRailroads();
         BuildUtility();
         BuildOther();
+        BuildChance();
+        BuildCommunityChest();
         BuildTiles();
+        
+        
         
     }
     
@@ -318,6 +334,62 @@ public class Datafactory {
         }
     }
 
+    public void BuildChance(){
+        // 8 , 23, 37
+        
+              Chance = new HashMap<Integer, Chance>();
+              
+              ArrayList<Integer> tilenums = new ArrayList<Integer>();
+              tilenums.add(8);
+            tilenums.add(23);
+              tilenums.add(37);
+              
+              String name = "chanceCards";
+              //chanceCards
+              
+              for(int index:tilenums){
+                                Chance chance = new Chance(chancecards);
+                                Chance.put(index,chance); 
+              }
+                            
+
+
+
+    }
+    
+     public void BuildCommunityChest(){
+        // 3 , 18, 34
+        
+              CommunityChest = new HashMap<Integer, CommunityChest>();
+              
+              ArrayList<Integer> tilenums = new ArrayList<Integer>();
+              tilenums.add(3);
+            tilenums.add(18);
+              tilenums.add(34);
+              
+              String name = "CommunityChest";
+              //CommunityChest
+              
+              for(int index:tilenums){
+                                CommunityChest communityChest = new CommunityChest(cChestCards);
+                                
+                                
+                                
+                                CommunityChest.put(index,communityChest); 
+              }
+                            
+
+
+
+    }
+    
+    
+    
+    
+    
+    
+    
+    
     
     public void BuildTiles(){
            tiles = new HashMap<Integer, Tile>();
@@ -333,64 +405,67 @@ public class Datafactory {
         boolean keyFound = false;
                    
 
-        if (Properties.containsKey(searchKey) || Taxes.containsKey(searchKey) || Railroads.containsKey(searchKey) || Utilities.containsKey(searchKey) || OtherTempo.containsKey(searchKey) ) {
+        if (Properties.containsKey(searchKey) || Taxes.containsKey(searchKey) || Railroads.containsKey(searchKey) || Utilities.containsKey(searchKey) || OtherTempo.containsKey(searchKey) ||  CommunityChest.containsKey(searchKey) || Chance.containsKey(searchKey)) {
             keyFound = true;
         }
 
 // print the result
 if (keyFound) {
-    System.out.println("At least one HashMap contains the key " + searchKey);
+    //System.out.println("At least one HashMap contains the key " + searchKey);
     
             if (Properties.containsKey(searchKey)) {
                 type = Properties.get(searchKey);
                 Name = Properties.get(searchKey).getName();
-                System.out.println(Name);
-                System.out.println(type);
+              //  // System.out.println(Name);
+              //// System.out.println(Name);
             } else if (Taxes.containsKey(searchKey)) {
                 type = Taxes.get(searchKey);
                 Name = Taxes.get(searchKey).getName();
-                System.out.println(Name);
-                                System.out.println(type);
+              // // System.out.println(Name);
+                //              // System.out.println(Name);
 
             } else if (Railroads.containsKey(searchKey)) {
                 type = Railroads.get(searchKey);
                 Name = Railroads.get(searchKey).getName();
-                System.out.println(Name);
-                                System.out.println(type);
+                // System.out.println(Name);
+                              // System.out.println(Name);
 
             } else if (Utilities.containsKey(searchKey)) {
                 type = Utilities.get(searchKey);
                 Name = Utilities.get(searchKey).getName();
-                System.out.println(Name);
-                                System.out.println(type);
+                // System.out.println(Name);
+                              // System.out.println(Name);
 
             } else if (OtherTempo.containsKey(searchKey)) {
                 type = OtherTempo.get(searchKey);
                 Name = OtherTempo.get(searchKey).getName();
-                System.out.println(Name);
-                                System.out.println(type);
+                // System.out.println(Name);
+                              // System.out.println(Name);
 
             }
+            
+            
+            // || Chance.containsKey(searchKey)
+            else if (CommunityChest.containsKey(searchKey)){
+                type = CommunityChest.get(searchKey);
+                Name = "CommunityChest";
+                // System.out.println(Name);
+                              // System.out.println(Name);
+            }
+            
+            else if (Chance.containsKey(searchKey)){
+                type = Chance.get(searchKey);
+                Name = "Chance";
+                // System.out.println(Name);
+              // System.out.println(Name);
+            }
+                     Tile tile = new Tile(searchKey, type, Name );
+                     tiles.put(searchKey,tile);
+            
 } else {
     System.out.println("None of the HashMaps contains the key " + searchKey);
 }
 
-     
-         
-     
-        
-    /* 
-     if(type == null){
-            
-    }
-
-     else{
-         Tile tile = new Tile(i, type, Name );
-         
-         tiles.put(i, tile);
-     }
-
-      */
      
      
      
@@ -405,6 +480,8 @@ if (keyFound) {
             }
     }
            
-    
+    public HashMap<Integer, Tile> getTiles() {
+        return tiles;
     }
+}
 

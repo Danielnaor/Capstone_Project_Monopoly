@@ -13,10 +13,11 @@ import java.util.HashMap;
 public class MainWindow extends javax.swing.JFrame {
     private HashMap<Integer, Tile> tiles;
     private HashMap<Integer, Player> players;
-    private Card[] cChestCards;
-    private Card[] chanceCards;
+    public Card[] cChestCards;
+    public Card[] chanceCards;
     private int currentPlayer;
     public static int lastRoll;
+    
     private int numPlayers;
     private   Cube roll = new Cube();
 
@@ -25,11 +26,20 @@ public class MainWindow extends javax.swing.JFrame {
      */
     public MainWindow() {
         initComponents();
-        Datafactory df = new Datafactory();
+        loadCards();
+        Datafactory df = new Datafactory(chanceCards,cChestCards);
+                tiles = df.getTiles();
+                                    System.out.println("Test");
+
+                
+                for(int tile: tiles.keySet()){
+                    System.out.println(tiles.get(tile).getTypeName());
+                    
+                }
+//getTypeName
               roll = roll();
           lastRoll =    roll.getRoll1()+roll.getRoll2();
           
-        
        
     }
 
@@ -145,16 +155,17 @@ public class MainWindow extends javax.swing.JFrame {
     public void loadCards(){
         Card chance1 = new Card("Go to Illinois Avenue", false, 25, 0);
         Card chance2 = new Card("Pay Poor Tax of $15", false, 0, -15);
-        Card chance3 = new Card("Go Back 3 Spaces", false, players.get(currentPlayer).getLocation() - 3, 0);
-        //Card chance4 = new Card()
-        //Card chance5 = new Card()
+//        Card chance3 = new Card("Go Back 3 Spaces", false, players.get(currentPlayer).getLocation() - 3, 0);
+        Card chance4 = new Card("Advance to go", false, 25, 200);
+        Card chance5 = new Card("TAKE A RIDE ON THE READING IF YOU PASS GO COLLECT $200", false,6, 0);
+        
         Card chance6 = new Card("Get out of Jail Free", true, 0, 0);
         Card chance7 = new Card("Go Directly to Jail", false, 11, 0);
         Card chance8 = new Card("Your Building And Loan Matures", false, 0, 150);
         Card chance9 = new Card("Take a Walk on the Boardwalk", false, 40, 0);
         Card chance10 = new Card("Bank Pays You Dividend of $50", false, 0, 50);
-     
-        //Card chance11 = new Card("Make General Repairs On All Your Property")
+        Card chance11 = new Card ("ADVANCE TO ST. CHARLES PLACE IF YOU PASS GO COLLECT $200" , false, 12, 0);
+        //Card chance12 = new Card("Make General Repairs On All Your Property")
         
         Card chance12 = new Card("You Have Been Elected Chairman of the Board Pay Each Player $50", false, 0, (50 * numPlayers));
     }
