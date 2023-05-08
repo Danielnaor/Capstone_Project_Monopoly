@@ -1,0 +1,3 @@
+location	name	taxValue
+5	Income tax	200
+39	Luxury tax	100

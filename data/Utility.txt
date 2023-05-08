@@ -1,0 +1,3 @@
+location	name	cost	mortgage	rentRate	rentRate1	isMortgaged	owner
+13	Electric Company	150	75	4	10	FALSE	null
+29	Water Works	150	75	4	10	FALSE	null
