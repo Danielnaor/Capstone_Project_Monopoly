@@ -38,6 +38,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -45,7 +46,7 @@ import javax.swing.table.DefaultTableModel;
  * @author manske_905351
  */
 public class MainWindow extends javax.swing.JFrame {
-    
+
     private HashMap<Integer, Tile> tiles;
     private HashMap<Integer, Player> players;
     private HashMap<String, Integer> fullsets;
@@ -74,8 +75,7 @@ public class MainWindow extends javax.swing.JFrame {
      */
     public MainWindow() {
         this.roll = new Cube();
-        
-        
+
         initComponents();
         //loadCards();
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -85,9 +85,9 @@ public class MainWindow extends javax.swing.JFrame {
 
         // dim = bounds.getSize();
         dim = screenSize;
-        
+
         GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        
+
         Rectangle bounds = environment.getMaximumWindowBounds();
 
         //dim = bounds.getSize();
@@ -96,63 +96,100 @@ public class MainWindow extends javax.swing.JFrame {
         jInternalFrameGameBoardProperties.setPreferredSize(dim);
         jInternalFrameOptionsMenu.setPreferredSize(dim);
         jInternalFrameGameBoard.setPreferredSize(dim);
-        
+
         changeToGraphicPanelSize();
-          
-        roll = roll();
-        
-        reloadFromFile = true;
-        createPreferancesFile();
-        
-        
-        // check if preferences file exists
-        // if it does, load it
-        File preferencesFile = new File("preferences.txt");
-        if (preferencesFile.exists()) {
-            boolean isModelEmpty = true;
-            File modelFile = new File(currentFile);
-            
-            if(modelFile.exists()){
-                if(modelFile.length() > 0){
-                    isModelEmpty = false;
-                }
-            }
-            
-            //GameModel model = readModel();
 
-            if(isModelEmpty || !reloadFromFile){
-                System.out.println("model is null or reload from file is null");
-                        Datafactory df = new Datafactory(chanceCards, cChestCards);
-                        tiles = df.getTiles();
-                        
-                        players = new HashMap<Integer, Player>();
-                        
-                        jTextFieldCurrentPlayer.setText("1");
-                        jTextFieldBalance.setText("1500");
-                        jTextField_Upgrade_Cost.setText("0");
-                        jTextField_MortgageValue.setText("0");
-            }
-
-        } else {
-            // show options menu
-        }
-        
-
-        //Sets the default state of all GUI elements
         jInternalFrameGameBoardProperties.setVisible(false);
         jInternalFrameMainMenu.setVisible(true);
         jInternalFrameOptionsMenu.setVisible(false);
         jInternalFrameGameBoard.setVisible(false);
         jDialog_GameOver.setVisible(false);
+
+        roll = roll();
+
+        reloadFromFile = true;
+        createPreferancesFile();
+
+        // check if preferences file exists
+        // if it does, load it
+        boolean isModelEmpty = true;
+
+        File preferencesFile = new File("preferences.txt");
+        if (preferencesFile.exists()) {
+            File modelFile = new File(currentFile);
+
+            if (modelFile.exists()) {
+                if (modelFile.length() > 0) {
+                    isModelEmpty = false;
+                }
+            }
+        }
         
         
         
-        jButtonEndTurn.setEnabled(false);
-        jButtonPurchase.setEnabled(false);
-        jDialog_Upgrade.setVisible(false);
-        jButton_Properties.setEnabled(false);
-        graphicsPanel = (GraphicPanel) jPanelGameBoard;
         
+
+        
+
+        
+        
+        
+        
+        if (!isModelEmpty) {
+                // ask the user if he want to load the game from the file or not. 
+            // the dialog should appear after the JINternal frame is visible 
+                    int dialogResult = JOptionPane.showConfirmDialog(null, "Do you want to load the game from the file?", "Confirm Dialog", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+           // int dialogResult = JOptionPane.showConfirmDialog(null, "Do you want to load the game from the file?");
+            if (dialogResult == JOptionPane.YES_OPTION) {
+                reloadFromFile = true;
+                System.out.println("Chose yes");
+            } else {
+                reloadFromFile = false;
+                System.out.println("Chose no");
+            }
+        }
+        
+
+        //GameModel model = readModel();
+        // print isModelEmpty and print reloadFromFile
+        System.out.println("isModelEmpty: " + isModelEmpty);
+        System.out.println("reloadFromFile: " + reloadFromFile);
+
+        if (isModelEmpty || !reloadFromFile) {
+            reloadFromFile = false;
+            System.out.println("model is null or reload from file is null");
+            Datafactory df = new Datafactory(chanceCards, cChestCards);
+            tiles = df.getTiles();
+
+            players = new HashMap<Integer, Player>();
+
+            jTextFieldCurrentPlayer.setText("1");
+            jTextFieldBalance.setText("1500");
+            jTextField_Upgrade_Cost.setText("0");
+            jTextField_MortgageValue.setText("0");
+
+            jButtonEndTurn.setEnabled(false);
+            jButtonPurchase.setEnabled(false);
+            jDialog_Upgrade.setVisible(false);
+            jButton_Properties.setEnabled(false);
+            graphicsPanel = (GraphicPanel) jPanelGameBoard;
+
+        } else {
+            System.out.println("loading from file");
+
+            // show game board 
+            // make a code that will trigger jButtonStartGameActionPerformed
+            jButtonEndTurn.setEnabled(false);
+            jButtonPurchase.setEnabled(false);
+            jDialog_Upgrade.setVisible(false);
+            jButton_Properties.setEnabled(false);
+            graphicsPanel = (GraphicPanel) jPanelGameBoard;
+
+            jButtonStartGameActionPerformed(null);
+
+        }
+
     }
 
     /**
@@ -796,82 +833,116 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void jButtonStartGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStartGameActionPerformed
         //Starts the game with the correct number of players and starting cash based on the options menu
+        // if load file is selected, the game will load the file and start the game
+        System.out.println("Fine so far2.5");
 
-        if (jRadioButton2Players.isSelected()) {
-            Player player = new Player(1, null, Integer.parseInt(jTextFieldStartingBalance.getText()),
-                    1, false, false, 0, Color.BLUE);
-            
-            Player player2 = new Player(2, null, Integer.parseInt(jTextFieldStartingBalance.getText()),
-                    1, false, false, 0, Color.RED);
-            
-            players.put(player.getPlayerNum(), player);
-            players.put(player2.getPlayerNum(), player2);
-            numPlayers = 2;
-            
-        } else if (jRadioButton3Players.isSelected()) {
-            Player player = new Player(1, null, Integer.parseInt(jTextFieldStartingBalance.getText()),
-                    1, false, false, 0, Color.BLUE);
-            
-            Player player2 = new Player(2, null, Integer.parseInt(jTextFieldStartingBalance.getText()),
-                    1, false, false, 0, Color.RED);
-            
-            Player player3 = new Player(3, null, Integer.parseInt(jTextFieldStartingBalance.getText()),
-                    1, false, false, 0, Color.GREEN);
-            
-            players.put(player.getPlayerNum(), player);
-            players.put(player2.getPlayerNum(), player2);
-            players.put(player3.getPlayerNum(), player3);
-            numPlayers = 3;
-            
-        } else if (jRadioButton4Players.isSelected()) {
-            Player player = new Player(1, null, Integer.parseInt(jTextFieldStartingBalance.getText()),
-                    1, false, false, 0, Color.BLUE);
-            
-            Player player2 = new Player(2, null, Integer.parseInt(jTextFieldStartingBalance.getText()),
-                    1, false, false, 0, Color.RED);
-            
-            Player player3 = new Player(3, null, Integer.parseInt(jTextFieldStartingBalance.getText()),
-                    1, false, false, 0, Color.GREEN);
-            
-            Player player4 = new Player(4, null, Integer.parseInt(jTextFieldStartingBalance.getText()),
-                    1, false, false, 0, Color.YELLOW);
-            
-            players.put(player.getPlayerNum(), player);
-            players.put(player2.getPlayerNum(), player2);
-            players.put(player3.getPlayerNum(), player3);
-            players.put(player4.getPlayerNum(), player4);
-            numPlayers = 4;
-            
+        if (reloadFromFile) {
+
+            System.out.println("Fine so far3");
+
+            GameModel model = readModel();
+            tiles = model.tiles;
+            players = model.players;
+            fullsets = model.fullsets;
+            currentPlayer = model.currentPlayer;
+            numPlayers = model.numPlayers;
+            defaultMoney = model.defaultMoney;
+            consecutive_doubles = model.consecutive_doubles;
+            upgrades = model.upgrades;
+
+            // make sure none of this are null and if they are print it out 
+            if (tiles == null) {
+                System.out.println("Tiles are null loading file, starting game");
+            } 
+
+            jInternalFrameMainMenu.setVisible(false);
+            jInternalFrameGameBoard.setVisible(true);
+            jTextFieldBalance.setText(players.get(currentPlayer).getBalance() + "");
+            jTextFieldCurrentPlayer.setText(currentPlayer + "");
+            jTextFieldLocation.setText(players.get(currentPlayer).getLocation() + "");
+
+            graphicsPanel.setTiles(tiles);
+            graphicsPanel.processData(players, tiles);
+
         } else {
-            JOptionPane.showMessageDialog(MainWindow.this, "Please Select The Number of Players");
-            return;
+            System.out.println("Fine so far3.2");
+            if (jRadioButton2Players.isSelected()) {
+                Player player = new Player(1, null, Integer.parseInt(jTextFieldStartingBalance.getText()),
+                        1, false, false, 0, Color.BLUE);
+
+                Player player2 = new Player(2, null, Integer.parseInt(jTextFieldStartingBalance.getText()),
+                        1, false, false, 0, Color.RED);
+
+                players.put(player.getPlayerNum(), player);
+                players.put(player2.getPlayerNum(), player2);
+                numPlayers = 2;
+
+            } else if (jRadioButton3Players.isSelected()) {
+                Player player = new Player(1, null, Integer.parseInt(jTextFieldStartingBalance.getText()),
+                        1, false, false, 0, Color.BLUE);
+
+                Player player2 = new Player(2, null, Integer.parseInt(jTextFieldStartingBalance.getText()),
+                        1, false, false, 0, Color.RED);
+
+                Player player3 = new Player(3, null, Integer.parseInt(jTextFieldStartingBalance.getText()),
+                        1, false, false, 0, Color.GREEN);
+
+                players.put(player.getPlayerNum(), player);
+                players.put(player2.getPlayerNum(), player2);
+                players.put(player3.getPlayerNum(), player3);
+                numPlayers = 3;
+
+            } else if (jRadioButton4Players.isSelected()) {
+                Player player = new Player(1, null, Integer.parseInt(jTextFieldStartingBalance.getText()),
+                        1, false, false, 0, Color.BLUE);
+
+                Player player2 = new Player(2, null, Integer.parseInt(jTextFieldStartingBalance.getText()),
+                        1, false, false, 0, Color.RED);
+
+                Player player3 = new Player(3, null, Integer.parseInt(jTextFieldStartingBalance.getText()),
+                        1, false, false, 0, Color.GREEN);
+
+                Player player4 = new Player(4, null, Integer.parseInt(jTextFieldStartingBalance.getText()),
+                        1, false, false, 0, Color.YELLOW);
+
+                players.put(player.getPlayerNum(), player);
+                players.put(player2.getPlayerNum(), player2);
+                players.put(player3.getPlayerNum(), player3);
+                players.put(player4.getPlayerNum(), player4);
+                numPlayers = 4;
+
+            } else {
+                JOptionPane.showMessageDialog(MainWindow.this, "Please Select The Number of Players");
+                return;
+            }
+            jInternalFrameMainMenu.setVisible(false);
+            jInternalFrameGameBoard.setVisible(true);
+            currentPlayer = 1;
+            jTextFieldBalance.setText(players.get(currentPlayer).getBalance() + "");
+
+            Integer[] PlayerOccupying = new Integer[numPlayers];
+            Integer numTileOccupied = 0;
+            for (int i = 0; i < numPlayers; i++) {
+                PlayerOccupying[i] = (i + 1);
+                numTileOccupied++;
+            }
+
+            Tile newTile1 = tiles.get(1);
+
+            newTile1.setPlayerOccupying(PlayerOccupying);
+            newTile1.setNumTileOccupied(numTileOccupied);
+
+            tiles.put(1, newTile1);
+
+            System.out.println("called processData 951");
+            graphicsPanel.setTiles(tiles);
+            graphicsPanel.processData(players, tiles);
+
+            tiles = graphicsPanel.getTiles();
+
+            checkSets();
+            writeModel();
         }
-        jInternalFrameMainMenu.setVisible(false);
-        jInternalFrameGameBoard.setVisible(true);
-        currentPlayer = 1;
-        jTextFieldBalance.setText(players.get(currentPlayer).getBalance() + "");
-        
-        Integer[] PlayerOccupying = new Integer[numPlayers];
-        Integer numTileOccupied = 0;
-        for (int i = 0; i < numPlayers; i++) {
-            PlayerOccupying[i] = (i + 1);
-            numTileOccupied++;
-        }
-        
-        Tile newTile1 = tiles.get(1);
-        
-        newTile1.setPlayerOccupying(PlayerOccupying);
-        newTile1.setNumTileOccupied(numTileOccupied);
-        
-        tiles.put(1, newTile1);
-        
-        graphicsPanel.setTiles(tiles);
-        graphicsPanel.processData(players, tiles);
-        
-        tiles = graphicsPanel.getTiles();
-        
-        
-        writeModel();
 
     }//GEN-LAST:event_jButtonStartGameActionPerformed
 
@@ -881,15 +952,15 @@ public class MainWindow extends javax.swing.JFrame {
         roll = roll();
         lastRoll = roll.getRoll1() + roll.getRoll2();
         int location = players.get(currentPlayer).getLocation();
-        
+
         players.get(currentPlayer).setPreviousLocation(location);
 
         //Checks if a double is rolled for a player who is in jail
         //Keeps track of the number of rolls to allow a player to pay to get out of jail after 3 turns
         if (players.get(currentPlayer).isInJail()) {
-            
+
             if (roll.IsDouble() || players.get(currentPlayer).getJailRoll() == 3) {
-                
+
                 players.get(currentPlayer).setInJail(false);
                 jButtonGetOutOfJail.setEnabled(false);
                 players.get(currentPlayer).setJailRoll(0);
@@ -902,16 +973,18 @@ public class MainWindow extends javax.swing.JFrame {
             players.get(currentPlayer).setLocation(roll.getRoll1() + roll.getRoll2() + players.get(currentPlayer).getLocation());
             jButtonRoll.setEnabled(false);
         }
-        
+
         if (gotoJail) {
             players.get(currentPlayer).setLocation(31);
             gotoJail = false;
-            
+
         }
-        
+
         UpdateTiles();
+        System.out.println("called processData 997");
+
         graphicsPanel.processData(players, tiles);
-        
+
         jTextFieldBalance.setText(players.get(currentPlayer).getBalance() + "");
         jTextFieldLocation.setText(tiles.get(players.get(currentPlayer).getLocation()).getName() + "");
         jButtonEndTurn.setEnabled(true);
@@ -920,8 +993,10 @@ public class MainWindow extends javax.swing.JFrame {
         }
         tileInteraction();
         jButtonRoll.setEnabled(false);
+        System.out.println("called processData 1010");
+
         graphicsPanel.processData(players, tiles);
-        
+
         tiles = graphicsPanel.getTiles();
 
     }//GEN-LAST:event_jButtonRollActionPerformed
@@ -931,9 +1006,9 @@ public class MainWindow extends javax.swing.JFrame {
         // Makes sure the right buttons are on and off when switching players
         int length = players.size();
         if (currentPlayer == length) {
-            
+
             currentPlayer = 1;
-            
+
         } else {
             currentPlayer++;
         }
@@ -960,9 +1035,9 @@ public class MainWindow extends javax.swing.JFrame {
 
         //Checks to see if the purchase property button should be enabled
         Tile tile = tiles.get(nextPlayer.getLocation());
-        
+
         if (tile.getTypeName().contains("Property")) {
-            
+
             Property property = (Property) tile.getType();
             if (property.getOwner() == null && nextPlayer.getBalance() >= property.getCost()) {
                 jButtonPurchase.setEnabled(true);
@@ -990,17 +1065,18 @@ public class MainWindow extends javax.swing.JFrame {
             jButtonPurchase.setEnabled(false);
         }
 
+        writeModel();
     }//GEN-LAST:event_jButtonEndTurnActionPerformed
 
     private void jButton_PropertiesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_PropertiesActionPerformed
         // Opens the properties table
         Player player = players.get(currentPlayer);
         ArrayList<Tile> tileArray = player.getTiles();
-        
+
         players.get(currentPlayer).setTiles(tileArray);
-        
+
         GameBoard_jTable_Properties.setVisible(true);
-        
+
         jInternalFrameGameBoard.setVisible(false);
         buildPropertiesTable();
         jInternalFrameGameBoardProperties.setVisible(true);
@@ -1037,7 +1113,7 @@ public class MainWindow extends javax.swing.JFrame {
                 player.setTiles(tiles);
             }
         }
-        
+
         if (place.equals("Uti")) {
             Utility utility = (Utility) tile.getType();
             player.changeBalance(-1 * utility.getCost());
@@ -1052,7 +1128,7 @@ public class MainWindow extends javax.swing.JFrame {
                 player.setTiles(tiles);
             }
         }
-        
+
         if (place.equals("Rai")) {
             Railroad railroad = (Railroad) tile.getType();
             player.changeBalance(-1 * railroad.getCost());
@@ -1110,7 +1186,7 @@ public class MainWindow extends javax.swing.JFrame {
         jButtonSellUpgrade.setEnabled(false);
         Player player = players.get(currentPlayer);
         ArrayList<Tile> tiles = player.getTiles();
-        
+
         for (Tile tile : tiles) {
             //Checks to see if the given tile is availble for upgrading
             if (tile.getName().equals(jComboBox_Upgrades.getSelectedItem())) {
@@ -1129,9 +1205,9 @@ public class MainWindow extends javax.swing.JFrame {
                 jTextField_Upgrade_Cost.setText(property.getUpgradeCost() + "");
                 return;
             }
-            
+
         }
-        
+
         changed = true;
         selectedUpgrade = jComboBox_Upgrades.getSelectedItem() + "";
     }//GEN-LAST:event_jComboBox_UpgradesItemStateChanged
@@ -1153,9 +1229,9 @@ public class MainWindow extends javax.swing.JFrame {
         int index = 0;
         for (Tile tile : tiles) {
             //out.println(tile.getName());
-            
+
             if (tile.getName().contains(selectedUpgrade)) {
-                
+
                 Property property = (Property) tile.getType();
                 property.setUpgradeLevel(property.getUpgradeLevel() + 1);
                 if (property.getUpgradeLevel() == 5) {
@@ -1204,7 +1280,7 @@ public class MainWindow extends javax.swing.JFrame {
         ArrayList<Tile> tiles = player.getTiles();
         jComboBox_Mortgage.addItem("NONE");
         for (Tile tile : tiles) {
-            
+
             jComboBox_Mortgage.addItem(tile.getName());
         }
     }//GEN-LAST:event_jButtonMortgageActionPerformed
@@ -1220,10 +1296,10 @@ public class MainWindow extends javax.swing.JFrame {
         jButton_Unmortgage.setEnabled(false);
         jButton_Mortgage_Property.setEnabled(false);
         Player player = players.get(currentPlayer);
-        
+
         ArrayList<Tile> tiles = player.getTiles();
         for (Tile tile : tiles) {
-            
+
             if (tile.getName().equals(jComboBox_Mortgage.getSelectedItem())) {
                 if (tile.getTypeName().contains("Property")) {
                     Property property = (Property) tile.getType();
@@ -1254,11 +1330,11 @@ public class MainWindow extends javax.swing.JFrame {
                         jButton_Mortgage_Property.setEnabled(true);
                     }
                     jTextField_MortgageValue.setText(railroad.getMortgage() + "");
-                    
+
                 }
-                
+
             }
-            
+
         }
         selectedMortgage = jComboBox_Mortgage.getSelectedItem() + "";
     }//GEN-LAST:event_jComboBox_MortgageItemStateChanged
@@ -1275,7 +1351,7 @@ public class MainWindow extends javax.swing.JFrame {
         int index = 0;
         for (Tile tile : tiles) {
             if (tile.getName().equals(selectedMortgage)) {
-                
+
                 if (tile.getTypeName().contains("Property")) {
                     //out.println("testing");
                     Property property = (Property) tile.getType();
@@ -1285,9 +1361,9 @@ public class MainWindow extends javax.swing.JFrame {
                     tiles.set(index, tile);
                     jButton_Mortgage_Property.setEnabled(false);
                     jButton_Unmortgage.setEnabled(true);
-                    
+
                 } else if (tile.getTypeName().contains("Utility")) {
-                    
+
                     Utility utility = (Utility) tile.getType();
                     utility.setIsMortgaged(true);
                     player.setBalance(player.getBalance() + utility.getMortgage());
@@ -1295,9 +1371,9 @@ public class MainWindow extends javax.swing.JFrame {
                     tiles.set(index, tile);
                     jButton_Mortgage_Property.setEnabled(false);
                     jButton_Unmortgage.setEnabled(true);
-                    
+
                 } else if (tile.getTypeName().contains("Railroad")) {
-                    
+
                     Railroad railroad = (Railroad) tile.getType();
                     railroad.setIsMortgaged(true);
                     player.setBalance(player.getBalance() + railroad.getMortgage());
@@ -1305,9 +1381,9 @@ public class MainWindow extends javax.swing.JFrame {
                     tiles.set(index, tile);
                     jButton_Mortgage_Property.setEnabled(false);
                     jButton_Unmortgage.setEnabled(true);
-                    
+
                 }
-                
+
             } else {
                 index++;
             }
@@ -1328,10 +1404,10 @@ public class MainWindow extends javax.swing.JFrame {
         ArrayList<Tile> tiles = player.getTiles();
         int index = 0;
         for (Tile tile : tiles) {
-            
+
             if (tile.getName().equals(selectedMortgage)) {
                 if (tile.getTypeName().contains("Property")) {
-                    
+
                     Property property = (Property) tile.getType();
                     property.setIsMortgaged(false);
                     player.setBalance(player.getBalance() - property.getMortgage());
@@ -1339,9 +1415,9 @@ public class MainWindow extends javax.swing.JFrame {
                     tiles.set(index, tile);
                     jButton_Mortgage_Property.setEnabled(true);
                     jButton_Unmortgage.setEnabled(false);
-                    
+
                 } else if (tile.getTypeName().contains("Utility")) {
-                    
+
                     Utility utility = (Utility) tile.getType();
                     utility.setIsMortgaged(false);
                     player.setBalance(player.getBalance() - utility.getMortgage());
@@ -1349,9 +1425,9 @@ public class MainWindow extends javax.swing.JFrame {
                     tiles.set(index, tile);
                     jButton_Mortgage_Property.setEnabled(true);
                     jButton_Unmortgage.setEnabled(false);
-                    
+
                 } else if (tile.getTypeName().contains("Railroad")) {
-                    
+
                     Railroad railroad = (Railroad) tile.getType();
                     railroad.setIsMortgaged(false);
                     player.setBalance(player.getBalance() - railroad.getMortgage());
@@ -1359,9 +1435,9 @@ public class MainWindow extends javax.swing.JFrame {
                     tiles.set(index, tile);
                     jButton_Mortgage_Property.setEnabled(true);
                     jButton_Unmortgage.setEnabled(false);
-                    
+
                 }
-                
+
             } else {
                 index++;
             }
@@ -1390,7 +1466,7 @@ public class MainWindow extends javax.swing.JFrame {
             then he is eligible to use the button immediately
             if not then he may use it for $50 after 3 failed doubles rolls
          */
-        
+
         Player player = players.get(currentPlayer);
         player.setInJail(false);
         if (player.getGetOutOfJailCards() > 0) {
@@ -1413,13 +1489,13 @@ public class MainWindow extends javax.swing.JFrame {
             to allow turn to end
             Updates the buy and sell upgrade buttons as appropriate
          */
-        selectedUpgrade = jComboBox_Upgrades.getSelectedItem() + ""; 
+        selectedUpgrade = jComboBox_Upgrades.getSelectedItem() + "";
         Player player = players.get(currentPlayer);
         ArrayList<Tile> tiles = player.getTiles();
         int index = 0;
-        
+
         for (Tile tile : tiles) {
-            
+
             if (tile.getName().equals(selectedUpgrade)) {
                 Property property = (Property) tile.getType();
                 property.setUpgradeLevel(property.getUpgradeLevel() - 1);
@@ -1480,12 +1556,12 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
     }
-    
+
     public void loadCards() {
         /*
             Creates and loads all of the chance cards for the game
          */
-        
+
         Card chance1 = new Card("Go to Illinois Avenue", false, 25, 0);
         Card chance2 = new Card("Pay Poor Tax of $15", false, 0, -15);
         Card chance3 = new Card("Go Back 3 Spaces", false, players.get(currentPlayer).getLocation() - 3, 0);
@@ -1496,11 +1572,11 @@ public class MainWindow extends javax.swing.JFrame {
         Card chance8 = new Card("Your Building And Loan Matures", false, 0, 150);
         Card chance9 = new Card("Take a Walk on the Boardwalk", false, 40, 0);
         Card chance10 = new Card("Bank Pays You Dividend of $50", false, 0, 50);
-        
+
         Card chance11 = new Card("Make General Repairs On All Your Property", false, 0, 50 * getUpgrades());
-        
+
         Card chance12 = new Card("You Have Been Elected Chairman of the Board Pay Each Player $50", false, 0, -1 * (50 * (numPlayers - 1)));
-        
+
         Card chance13 = new Card("ADVANCE TO ST. CHARLES PLACE IF YOU PASS GO COLLECT $200", false, 12, 0);
         chanceCards[0] = chance1;
         chanceCards[1] = chance2;
@@ -1547,12 +1623,12 @@ public class MainWindow extends javax.swing.JFrame {
         cChestCards[12] = cChest13;
         cChestCards[13] = cChest14;
         cChestCards[14] = cChest15;
-        
+
     }
 
     //Returns the total number of upgrades a player has purchased on all properties
     public int getUpgrades() {
-        
+
         Player temp = players.get(currentPlayer);
         int upgrades1 = 0;
         if (temp.getTiles() != null) {
@@ -1567,9 +1643,9 @@ public class MainWindow extends javax.swing.JFrame {
         //chanceCards[11].setMoney(upgrades * 50);
         upgrades = upgrades1;
         return upgrades1;
-        
+
     }
-    
+
     public Cube roll() {
         //Randomises the dice roll for the game
         Cube ref = new Cube();
@@ -1577,11 +1653,11 @@ public class MainWindow extends javax.swing.JFrame {
         int roll2 = ref.getRoll2();
         boolean isDouble = ref.IsDouble();
         Cube fullroll = new Cube(roll1, roll2, isDouble);
-        
+
         return fullroll;
-        
+
     }
-    
+
     public void tileInteraction() {
         jButtonPurchase.setEnabled(false);
         Player player = players.get(currentPlayer);
@@ -1599,37 +1675,39 @@ public class MainWindow extends javax.swing.JFrame {
         }
         //Manages the interaction for chance cards
         if (player.getLocation() == 8 || player.getLocation() == 23 || player.getLocation() == 37) {
-            
+
             loadCards();
             int min = 0;
             int max = 12;
             int random_int = (int) Math.floor(Math.random() * (max - min + 1) + min);
             Card card = chanceCards[random_int];
-            
+
             JOptionPane.showMessageDialog(MainWindow.this, card.getText());
             if (card.getLocation() != 0) {
                 player.setPreviousLocation(player.getLocation());
-                
+
                 if (card.getLocation() == 11) {
                     player.setLocation(11);
                     player.setInJail(true);
                 } else {
                     int lastLocation = player.getLocation();
-                    
+
                     player.setPreviousLocation(lastLocation);
-                    
+
                     player.setLocation(card.getLocation());
-                    
+
                 }
                 if (card.getLocation() < 0) {
                     backwards = true;
-                    
+
                 }
                 jTextFieldLocation.setText(tiles.get(players.get(currentPlayer).getLocation()).getName() + "");
                 UpdateTiles();
+                System.out.println("called processData 1719");
+
                 graphicsPanel.processData(players, tiles);
                 tileInteraction();
-                
+
                 return;
             }
             if (card.getMoney() != 0) {
@@ -1645,21 +1723,21 @@ public class MainWindow extends javax.swing.JFrame {
                 }
                 jTextFieldBalance.setText(player.getBalance() + "");
             }
-            
+
             if (card.isGetOutOfJailCard()) {
                 player.setGetOutOfJailCards(player.getGetOutOfJailCards() + 1);
             }
-            
+
         }
         //Manages the interaction with the Community Chest tiles
         if (player.getLocation() == 3 || player.getLocation() == 18 || player.getLocation() == 34) {
-            
+
             loadCards();
             int min = 0;
             int max = 14;
             int random_int = (int) Math.floor(Math.random() * (max - min + 1) + min);
             Card card = cChestCards[random_int];
-            
+
             JOptionPane.showMessageDialog(MainWindow.this, card.getText());
             if (card.getLocation() != 0) {
                 player.setPreviousLocation(player.getLocation());
@@ -1670,12 +1748,14 @@ public class MainWindow extends javax.swing.JFrame {
                     int lastLocation = player.getLocation();
                     player.setPreviousLocation(lastLocation);
                     player.setLocation(card.getLocation());
-                    
+
                 }
                 if (card.getLocation() < 0) {
                     backwards = true;
                 }
                 UpdateTiles();
+                System.out.println("called processData 1769");
+
                 graphicsPanel.processData(players, tiles);
                 jTextFieldLocation.setText(tiles.get(players.get(currentPlayer).getLocation()).getName() + "");
                 players.replace(currentPlayer, player);
@@ -1695,35 +1775,35 @@ public class MainWindow extends javax.swing.JFrame {
                 }
                 jTextFieldBalance.setText(player.getBalance() + "");
             }
-            
+
             if (card.isGetOutOfJailCard()) {
                 player.setGetOutOfJailCards(player.getGetOutOfJailCards() + 1);
             }
-            
+
         }
-        
+
         if (player.getLocation() >= 1 && player.getLocation() < player.getPreviousLocation()
                 && player.getPreviousLocation() != 31
                 && backwards != true) {//Manages the Go square
             player.setBalance(200 + player.getBalance());
             //System.out.println(player.getBalance());
         }
-        
+
         if (player.getLocation() == 11) {//Manages Jail Square
             if (player.isInJail()) {
-                
+
                 if (roll.IsDouble()) {
                     player.setInJail(false);
                     player.setJailRoll(0);
                 } else {
                     player.changeJailRoll(1);
                 }
-                
+
             }
         } else if (player.getLocation() == 31) {//Manages Go To Jail
             player.setPreviousLocation(31);
             player.setLocation(11);
-            
+
             player.setInJail(true);
             jButtonPurchase.setEnabled(false);
             UpdateTiles();
@@ -1733,9 +1813,9 @@ public class MainWindow extends javax.swing.JFrame {
         else if (player.getLocation() == 5 || player.getLocation() == 39) {
             Tax tax = (Tax) tiles.get(player.getLocation()).getType();
             player.setBalance(player.getBalance() - tax.getTaxValue());
-            
+
         }
-        
+
         if (finalPlace.equals("Rai")) {//Manages Railroad interactions including purchasing and rent
             Railroad railroad = (Railroad) tiles.get(player.getLocation()).getType();
             if (railroad.getOwner() == null && player.getBalance() >= railroad.getCost()) {
@@ -1743,7 +1823,7 @@ public class MainWindow extends javax.swing.JFrame {
             } else if (railroad.getOwner().getPlayerNum() != player.getPlayerNum()
                     && !railroad.getOwner().isInJail()
                     && !railroad.isIsMortgaged()) {
-                
+
                 int count = 0;
                 for (Tile key : railroad.getOwner().getTiles()) {
                     if (key.getTypeName().equals("Railroad")) {
@@ -1751,17 +1831,17 @@ public class MainWindow extends javax.swing.JFrame {
                     }
                 }
                 player.setBalance(player.getBalance() - railroad.getRent(count - 1));
-                
+
                 Player owner = players.get(railroad.getOwner().getPlayerNum());
                 owner.setBalance(owner.getBalance() + railroad.getRent(count - 1));
                 players.replace(owner.getPlayerNum(), owner);
-                
+
             } else {
                 jButtonEndTurn.setEnabled(true);
             }
-            
+
         }
-        
+
         if (finalPlace.equals("Uti")) {//Manages interaction with utility tiles including purchasing and rent
 
             Utility utility = (Utility) tiles.get(player.getLocation()).getType();
@@ -1772,7 +1852,7 @@ public class MainWindow extends javax.swing.JFrame {
                     && !utility.isIsMortgaged()) {
                 int count = 0;
                 for (Tile key : utility.getOwner().getTiles()) {
-                    
+
                     if (key.getTypeName().equals("Utility")) {
                         count++;
                     }
@@ -1781,45 +1861,45 @@ public class MainWindow extends javax.swing.JFrame {
                         Player owner = players.get(utility.getOwner().getPlayerNum());
                         owner.setBalance(owner.getBalance() + (4 * lastRoll));
                         players.replace(owner.getPlayerNum(), owner);
-                        
+
                     } else if (count == 2) {
                         player.setBalance(player.getBalance() - (10 * lastRoll));
                         Player owner = players.get(utility.getOwner().getPlayerNum());
                         owner.setBalance(owner.getBalance() + (10 * lastRoll));
                         players.replace(owner.getPlayerNum(), owner);
-                        
+
                     }
-                    
+
                 }
-                
+
             } else {
                 jButtonEndTurn.setEnabled(true);
             }
-            
+
         }
-        
+
         if (finalPlace.equals("Property{")) {//Manages interaction with property tiles including purchasing and rent
 
             Property property = (Property) tiles.get(player.getLocation()).getType();
-            
+
             if (property.getOwner() == null && player.getBalance() >= property.getCost()) {
                 jButtonPurchase.setEnabled(true);
             } else if (property.getOwner() != null
                     && property.getOwner().getPlayerNum() != player.getPlayerNum()
                     && !property.getOwner().isInJail()
                     && !property.isIsMortgaged()) {
-                
+
                 player.setBalance(player.getBalance() - property.getRent(property.getUpgradeLevel()));
                 Player owner = players.get(property.getOwner().getPlayerNum());
                 owner.setBalance(owner.getBalance() + property.getRent(property.getUpgradeLevel()));
                 players.replace(owner.getPlayerNum(), owner);
-                
+
             } else {
                 jButtonEndTurn.setEnabled(true);
             }
-            
+
         }
-        
+
         jTextFieldBalance.setText(player.getBalance() + "");
         players.replace(currentPlayer, player);
         //Checks if the player is bankrupt, if true, checks to see if there are enough players to continue the game
@@ -1855,7 +1935,7 @@ public class MainWindow extends javax.swing.JFrame {
                         }
                     }
                 }
-                
+
             }
             players.remove(currentPlayer);
             if (players.size() < 2) {
@@ -1864,13 +1944,13 @@ public class MainWindow extends javax.swing.JFrame {
                 jInternalFrameGameBoard.setVisible(false);
                 // call delete of gameProgressFile
             }
-            
+
         }
         players.replace(currentPlayer, player);
         int count = 0;
         int index = 0;
         for (int test : players.keySet()) {
-            
+
             if (!players.get(test).isBankrupt()) {
                 count++;
                 index = test;
@@ -1886,17 +1966,17 @@ public class MainWindow extends javax.swing.JFrame {
         if (player.isInJail() && player.getGetOutOfJailCards() > 0) {
             jButtonGetOutOfJail.setEnabled(true);
         }
-        
+
         if (player.getBalance() >= 0) {
             jButtonEndTurn.setEnabled(true);
         }
     }
-    
+
     private void buildPropertiesTable() {
         try {
             Player player = players.get(currentPlayer);
             ArrayList<Tile> playerTiles = new ArrayList<Tile>();
-            
+
             playerTiles = player.getTiles();
 
             //System.out.println("Player has: " + playerTiles.size() + "Players tiles: are ");
@@ -1904,7 +1984,7 @@ public class MainWindow extends javax.swing.JFrame {
                 //System.out.println(item.getTypeName() );
 
             }
-            
+
             Object[][] data = new Object[playerTiles.size()][6];
             String[] columnHeaders = {"Name", "Color", "Rent", "Upgrade Level", "Upgrade Cost", "Mortgage value"};
 
@@ -1912,14 +1992,14 @@ public class MainWindow extends javax.swing.JFrame {
             // schedule field to match the color
             //build the table
             int row = 0;
-            
+
             ArrayList<Integer> locations = new ArrayList<Integer>();
             for (Tile tile : playerTiles) {
                 locations.add(tile.getLocation());
             }
-            
+
             Collections.sort(locations);
-            
+
             int numUtilities = getNumUtilities(locations);
             int numRailroads = getNumRailroads(locations);
             //Builds the properties table, including, name, color, rent, upgrade level, upgrade cost, and mortgage value
@@ -1936,7 +2016,7 @@ public class MainWindow extends javax.swing.JFrame {
                     int upgradeLevel = property.getUpgradeLevel();
                     int currentRent = property.getRent()[upgradeLevel]; //rent
                     data[row][2] = currentRent;
-                    
+
                     data[row][3] = upgradeLevel;
 
                     //Upgrade Cost	
@@ -1948,7 +2028,7 @@ public class MainWindow extends javax.swing.JFrame {
                     utility.setOwner(player);
                     data[row][0] = utility.getName();
                     data[row][1] = "";
-                    
+
                     if (numUtilities == 1) {
                         data[row][2] = "4X the roll";
                     } else if (numUtilities == 2) {
@@ -1956,39 +2036,39 @@ public class MainWindow extends javax.swing.JFrame {
                     } else {
                         data[row][2] = "";
                     }
-                    
+
                     data[row][3] = " - ";
                     data[row][4] = " - ";
                     data[row][5] = utility.getMortgage();
-                    
+
                     row++;
-                    
+
                 } else if (place.equals("Railroad")) {
                     Railroad railroad = (Railroad) tile.getType();
                     railroad.setOwner(player);
                     data[row][0] = railroad.getName();
                     data[row][1] = "";
-                    
+
                     if (numRailroads >= 0) {
                         data[row][2] = railroad.getRent(numRailroads - 1);
-                        
+
                     } else {
                         data[row][2] = "";
                     }
-                    
+
                     data[row][3] = " - ";
                     data[row][4] = " - ";
                     data[row][5] = railroad.getMortgage();
-                    
+
                     row++;
-                    
+
                 } else {
                     System.out.println("ERROR: buildTable - wrong type failed");
-                    
+
                 }
-                
+
             }
-            
+
             DefaultTableModel dfm = (DefaultTableModel) GameBoard_jTable_Properties.getModel();
             dfm.setDataVector(data, columnHeaders);
             //System.out.println("122222");
@@ -1999,12 +2079,12 @@ public class MainWindow extends javax.swing.JFrame {
         } catch (Exception ex) {
             System.out.println("ERROR: buildTable failed");
         }
-        
+
     }
 
     //returns the number of railroads owned by the player
     private int getNumRailroads(ArrayList<Integer> locations) {
-        
+
         int count = 0;
         for (int item : locations) {
             String typename = tiles.get(item).getTypeName();
@@ -2012,13 +2092,13 @@ public class MainWindow extends javax.swing.JFrame {
                 count++;
             }
         }
-        
+
         return count;
     }
 
     //returns the number of utilities owned by the player
     private int getNumUtilities(ArrayList<Integer> locations) {
-        
+
         int count = 0;
         for (int item : locations) {
             String typename = tiles.get(item).getTypeName();
@@ -2062,7 +2142,7 @@ public class MainWindow extends javax.swing.JFrame {
         } else {
             //System.out.println("missed one in whatType");
         }
-        
+
         return "";
     }
 
@@ -2079,7 +2159,7 @@ public class MainWindow extends javax.swing.JFrame {
             ArrayList<Tile> tiles = player.getTiles();
             if (tiles != null) {
                 for (Tile tile : tiles) {
-                    
+
                     if (tile.getTypeName().equals("Property")) {
                         Property property = (Property) tile.getType();
                         int num = property.getUpgradeLevel();
@@ -2089,17 +2169,17 @@ public class MainWindow extends javax.swing.JFrame {
                         }
                         total += property.getMortgage();
                     } else if (tile.getTypeName().equals("Utility")) {
-                        
+
                         Utility utility = (Utility) tile.getType();
                         total += utility.getMortgage();
-                        
+
                     } else if (tile.getTypeName().equals("Railroad")) {
-                        
+
                         Railroad railroad = (Railroad) tile.getType();
                         total += railroad.getMortgage();
-                        
+
                     }
-                    
+
                 }
             }
             if (total + player.getBalance() > 0) {
@@ -2110,7 +2190,7 @@ public class MainWindow extends javax.swing.JFrame {
         } else {
             return false;
         }
-        
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -2169,7 +2249,7 @@ private void changeToGraphicPanelSize() {
 
         /// jButtonRoll;
         int panelLeftBorder = jPanelGameBoard.getX();
-        
+
         int height = dim.height;
 
         //Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();  // Get the screen dimension
@@ -2178,13 +2258,13 @@ private void changeToGraphicPanelSize() {
 
         jPanelGameBoard.setSize(size);
         jPanelGameBoard.setPreferredSize(size);
-        
+
     }
-    
+
     private void checkSets() {
         HashMap<String, Integer> colors = new HashMap<>();
         fullsets = new HashMap<>();
-        
+
         colors.put("brown", 0); //2
         colors.put("lightBlue", 0); //3
         colors.put("pink", 0); //3
@@ -2202,13 +2282,13 @@ private void changeToGraphicPanelSize() {
         fullsets.put("yellow", 0);
         fullsets.put("green", 0);
         fullsets.put("blue", 0);
-        
+
         for (int playerNum : players.keySet()) {
             ArrayList<Tile> tiles = players.get(playerNum).getTiles();
             if (!(tiles == null)) {
                 for (Tile tile : tiles) {
                     if (tile.getTypeName().contains("Property")) {
-                        
+
                         Property property = (Property) tile.getType();
                         if (property.getColorName().equals("brown")) {
                             colors.put("brown", colors.get("brown") + 1);
@@ -2251,38 +2331,38 @@ private void changeToGraphicPanelSize() {
                                 fullsets.put("blue", playerNum);
                             }
                         }
-                        
+
                     }
-                    
+
                 }
             }
         }
     }
-    
+
     public void UpdateTiles() {
         /*
          * This method will update the tiles to show the players on the tiles
          */
-        
+
         int Oldlocation = players.get(currentPlayer).getPreviousLocation();
         Tile oldtile = tiles.get(Oldlocation);
         for (int j = 0; j < oldtile.getPlayerOccupying().length; j++) {
             if (oldtile.getPlayerOccupying()[j] == currentPlayer) {
                 Integer[] PlayerOccupying = oldtile.getPlayerOccupying().clone();
                 PlayerOccupying[j] = -1;
-                
+
                 oldtile.setPlayerOccupying(PlayerOccupying);
-                
+
                 int numOccuping = oldtile.getNumTileOccupied();
                 numOccuping--;
-                
+
                 oldtile.setNumTileOccupied(numOccuping);
-                
+
                 break;
             }
-            
+
         }
-        
+
         Integer[] tempPlayerOccupying = {-1, -1, -1, -1};
 
         // if there a -1 before any other player it will remove the -1 so the players are always beofre the -1
@@ -2295,13 +2375,13 @@ private void changeToGraphicPanelSize() {
                     }
                 }
             }
-            
+
         }
         //System.out.println("\t" + Arrays.toString(tempPlayerOccupying));
 
         oldtile.setPlayerOccupying(tempPlayerOccupying);
         graphicsPanel.setTiles(tiles);
-        
+
         tiles.put(Oldlocation, oldtile);
 
         // System.out.println("\t" + tiles.get(Oldlocation).getNumTileOccupied());
@@ -2311,179 +2391,176 @@ private void changeToGraphicPanelSize() {
 //        System.out.println(Newtile.getPlayerOccupying().length + Arrays.toString(Newtile.getPlayerOccupying()));
         for (int j = 0; j < Newtile.getPlayerOccupying().length; j++) {
             if (Newtile.getPlayerOccupying()[j] == -1) {
-                
+
                 Integer[] PlayerOccupying = Newtile.getPlayerOccupying().clone();
                 PlayerOccupying[j] = currentPlayer;
-                
+
                 Newtile.setPlayerOccupying(PlayerOccupying);
-                
+
                 int numOccuping = Newtile.getNumTileOccupied();
                 numOccuping++;
-                
+
                 Newtile.setNumTileOccupied(numOccuping);
-                
+
                 break;
             }
-            
+
         }
         tiles.put(location, Newtile);
         graphicsPanel.setTiles(tiles);
-        
+
     }
 
-
     // writeModel
-    private void writeModel(GameModel model) throws IOException{
+    private void writeModel(GameModel model) throws IOException {
         // Writes the model as an object to disk
-       
+
         try {
-            
-            FileOutputStream    fos = new FileOutputStream(new File(currentFile));
-            ObjectOutputStream  oos = new ObjectOutputStream(fos);
-            
+
+            FileOutputStream fos = new FileOutputStream(new File(currentFile));
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+
             oos.writeObject(model);
             oos.close();
-            
+
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-        
+        }
+
     }
 
     // readModel
     private GameModel readModel() {
-    // Reads the model from disk and returns it as an object
-    GameModel model = null;
-    
-    try {
-        File file = new File(currentFile);
+        // Reads the model from disk and returns it as an object
+        GameModel model = null;
 
-        // Check if the file is empty
-        if (file.length() == 0) {
-            System.out.println("model file is null");
-            return null;
+        try {
+            File file = new File(currentFile);
+
+            // Check if the file is empty
+            if (file.length() == 0) {
+                System.out.println("model file is null");
+                return null;
+            }
+
+            FileInputStream fis = new FileInputStream(file);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+
+            model = (GameModel) ois.readObject();
+            ois.close();
+
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        FileInputStream fis = new FileInputStream(file);
-        ObjectInputStream ois = new ObjectInputStream(fis);
-        
-        model = (GameModel) ois.readObject();
-        ois.close();
-        
-    } catch (FileNotFoundException ex) {
-        Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-    } catch (IOException | ClassNotFoundException ex) {
-        Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-    } 
-    
-    return model;
-}
-
-    
-    
+        return model;
+    }
 
     private String getCurrentFileLocation() {
-        
-        try
-        {
-        Scanner file = new Scanner(new File("preferences.txt"));
-        return file.nextLine();
-        }
-        
-        catch(FileNotFoundException ex)
-        {
+
+        try {
+            Scanner file = new Scanner(new File("preferences.txt"));
+            return file.nextLine();
+        } catch (FileNotFoundException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
 
     private void writeCurrentFileLocaitonToPreferences() {
-        try{
-            
+        try {
+
             FileWriter writer = new FileWriter("preferences.txt");
             writer.write(currentFile);
             writer.close();
-        }
-        catch(IOException ex){
+        } catch (IOException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
 
-    private void createPreferancesFile(){
-       
-            System.out.println("createPreferancesFile");
-        try{
-            
-            
-            
+    private void createPreferancesFile() {
+
+        System.out.println("createPreferancesFile");
+        try {
+
             File preferencesFile = new File("preferences.txt");
-            if(preferencesFile.exists()){
+            if (preferencesFile.exists()) {
                 preferencesFile.delete();
             }
-           preferencesFile.createNewFile();
-            
-           
+            preferencesFile.createNewFile();
+
             FileWriter writer = null;
             // if currentFile is not null then write it to the file
-            if(currentFile != null){
-                            writeCurrentFileLocaitonToPreferences();
-            }
-
-            else {
+            if (currentFile != null) {
+                writeCurrentFileLocaitonToPreferences();
+            } else {
                 writer = new FileWriter("preferences.txt");
                 // create a new file
-                try{
-                                System.out.println("createPreferancesFile2");
+                try {
+                    System.out.println("createPreferancesFile2");
 
-                File modelFile = new File("model");
-                modelFile.createNewFile();
-                System.out.println(modelFile.getAbsolutePath());
-                currentFile = modelFile.getAbsolutePath();
-                writer.write(currentFile);
-                writer.close();
-                } catch(IOException ex){
+                    File modelFile = new File("model");
+                    modelFile.createNewFile();
+                    System.out.println(modelFile.getAbsolutePath());
+                    currentFile = modelFile.getAbsolutePath();
+                    writer.write(currentFile);
+                    writer.close();
+                } catch (IOException ex) {
                     Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                
-                
+
             }
-            
+
             writer.close();
-        }
-        catch(IOException ex){
+        } catch (IOException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    
-    
-    private void writeModel(){
+    private void writeModel() {
         // Writes the model as an object to disk
         System.out.println("Written Model");
-        GameModel model = new GameModel(tiles,players, fullsets, currentPlayer, numPlayers, defaultMoney, consecutive_doubles, upgrades);
-       
+        GameModel model = new GameModel(tiles, players, fullsets, currentPlayer, numPlayers, defaultMoney, consecutive_doubles, upgrades);
+
         try {
-            
-            FileOutputStream    fos = new FileOutputStream(new File(currentFile));
-            ObjectOutputStream  oos = new ObjectOutputStream(fos);
-            
+
+            FileOutputStream fos = new FileOutputStream(new File(currentFile));
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+
             oos.writeObject(model);
             oos.close();
-            
+
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-        
-    }
-    
-    
-}
+        }
 
+        // now just check if all the values that we putten in the model are not null
+        // so check if the tiles are not null and if they are null print out tiles are null
+        if (tiles == null) {
+            System.out.println("Error: tiles are null");
+            return;
+        }
+
+        if (players == null) {
+            System.out.println("Error: players are null");
+            return;
+        }
+
+        if (fullsets == null) {
+            System.out.println("Error: fullsets are null");
+            return;
+        }
+
+    }
+
+}
 
 // the MainWindow class has the following instance variables; 
 // private HashMap<Integer, Tile> tiles; // will hold all the tiles in the game, the key is the location of the tile on the board
@@ -2505,7 +2582,6 @@ private void changeToGraphicPanelSize() {
 // private int upgrades; // will hold the number of upgrades
 // private boolean backwards; // will hold if the player is moving backwards
 // private boolean changed = false; // will hold if the player has changed
-
 // GameModel class, will store all the data for the game so taht it can be saved and can be loaded from a file
 // we can assume that the game will be saved and loaded from a file, and the file will be updated after every turn
 // the GameModel class will have the following instance variables

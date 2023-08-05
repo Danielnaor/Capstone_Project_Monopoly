@@ -43,7 +43,8 @@ public class GraphicPanel extends JPanel {
     private HashMap<Integer, Tile> tiles;
 
     public void processData(HashMap<Integer, Player> Players, HashMap<Integer, Tile> tiles) {
-
+        // print what method called processData
+        System.out.println("GraphicPanel processData was called by " + Thread.currentThread().getStackTrace()[2].getMethodName());
         this.players = Players;
         this.tiles = tiles;
 
@@ -53,7 +54,11 @@ public class GraphicPanel extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
+                super.paintComponent(g);
+
+                
+
+
 
         // the dimensions of the game board from CSV 
         double gameBoardWidth = 2600.0;

@@ -18,6 +18,7 @@ class Card {
     private int location;
     private int money;
 
+    
     public Card(String text, boolean getOutOfJailCard, int location, int money) {
         this.text = text;
         this.getOutOfJailCard = getOutOfJailCard;

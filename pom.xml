@@ -9,6 +9,31 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>18</maven.compiler.source>
         <maven.compiler.target>18</maven.compiler.target>
-        <exec.mainClass>com.mycompany.capstone_project_monopoly.Capstone_Project_Monopoly</exec.mainClass>
+        <exec.mainClass>com.mycompany.capstone_project_monopoly.DeviceNameExample</exec.mainClass>
     </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <!-- The maven-jar-plugin to build the JAR -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <!-- Set the main class in the JAR manifest -->
+                    <archive>
+                        <manifest>
+                            <mainClass>${mainClass}</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
+
+
+
+
+
+
+
