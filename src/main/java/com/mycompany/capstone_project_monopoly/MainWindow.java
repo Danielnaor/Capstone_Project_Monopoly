@@ -68,6 +68,7 @@ public class MainWindow extends javax.swing.JFrame {
     private boolean changed = false;
     private String currentFile;
     private boolean reloadFromFile;
+    
 
 //drive
     /**
@@ -77,6 +78,9 @@ public class MainWindow extends javax.swing.JFrame {
         this.roll = new Cube();
 
         initComponents();
+
+        // ask the user if he wants to create a game room or join a game room
+        
         //loadCards();
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -123,17 +127,7 @@ public class MainWindow extends javax.swing.JFrame {
                     isModelEmpty = false;
                 }
             }
-        }
-        
-        
-        
-        
-
-        
-
-        
-        
-        
+        }            
         
         if (!isModelEmpty) {
                 // ask the user if he want to load the game from the file or not. 
@@ -189,6 +183,9 @@ public class MainWindow extends javax.swing.JFrame {
             jButtonStartGameActionPerformed(null);
 
         }
+
+
+    
 
     }
 
@@ -2560,45 +2557,10 @@ private void changeToGraphicPanelSize() {
 
     }
 
-}
 
-// the MainWindow class has the following instance variables; 
-// private HashMap<Integer, Tile> tiles; // will hold all the tiles in the game, the key is the location of the tile on the board
-// private HashMap<Integer, Player> players; // will hold all the players in the game, the key is the player number min 2 max 4
-// private HashMap<String, Integer> fullsets; // will hold the full sets of properties, the key is the color of the set
-// public Card[] cChestCards = new Card[15]; // will hold all the community chest cards
-// public Card[] chanceCards = new Card[13]; // will hold all the chance cards
-// private int currentPlayer = 1; // will hold the current player number
-// public static int lastRoll; // will hold the last roll of the dice
-// public static int numPlayers; // will hold the number of players in the game
-// private Cube roll; // will hold the dice roll
-// private int defaultMoney = 1500; // will hold the default money for the players
-// private GraphicPanel graphicsPanel; // will hold the graphics panel 
-// private boolean gotoJail = false; // will hold if the player is going to jail
-// private String selectedMortgage = ""; // will hold the selected mortgage 
-// private String selectedUpgrade = ""; // will hold the selected upgrade 
-// public int consecutive_doubles; // will hold the number of consecutive doubles
-// public static Dimension dim; // will hold the screen dimension
-// private int upgrades; // will hold the number of upgrades
-// private boolean backwards; // will hold if the player is moving backwards
-// private boolean changed = false; // will hold if the player has changed
-// GameModel class, will store all the data for the game so taht it can be saved and can be loaded from a file
-// we can assume that the game will be saved and loaded from a file, and the file will be updated after every turn
-// the GameModel class will have the following instance variables
-// private HashMap<Integer, Tile> tiles; // will hold all the tiles in the game, the key is the location of the tile on the board
-// private HashMap<Integer, Player> players; // will hold all the players in the game, the key is the player number min 2 max 4
-// private HashMap<String, Integer> fullsets; // will hold the full sets of properties, the key is the color of the set
-// public Card[] cChestCards = new Card[15]; // will hold all the community chest cards
-// public Card[] chanceCards = new Card[13]; // will hold all the chance cards
-// private int currentPlayer = 1; // will hold the current player number
-// dont need to save the last roll since it doesnt metter because the players turn is over
-// public static int numPlayers; // will hold the number of players in the game
-// dont need to save the cube since it doesnt metter because the players turn is over
-// private int defaultMoney = 1500; // will hold the default money for the players
-// wont need to save the graphics panel since it will be loaded with the tiles and players
-// wond need to save the gotoJail since it will be loaded with the players
-// wont need to save the selectedMortgage since it will be loaded later on. 
-// wont need to save the selectedUpgrade since it will be loaded later on.
-// public int consecutive_doubles; // will hold the number of consecutive doubles
-// wont need to save the screen dimension since it will be loaded with the graphics panel
-// private int upgrades; // will hold the number of upgrades
+    // we will add an option to play across multiple computers in order to do so we will need to send the model to the other computers using the following method
+    private void sendModel(GameModel model) {
+
+    }
+
+}

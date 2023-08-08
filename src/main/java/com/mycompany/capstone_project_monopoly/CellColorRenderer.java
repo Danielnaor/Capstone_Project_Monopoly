@@ -4,10 +4,6 @@
  */
 package com.mycompany.capstone_project_monopoly;
 
-
-
-
-    
 import java.awt.Color;
 import java.awt.Component;
 
